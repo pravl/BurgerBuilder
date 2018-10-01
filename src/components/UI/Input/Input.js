@@ -12,7 +12,7 @@ const input = (props) => {
         case('textarea'):
             inputElement = <textarea className={classes.InputElement} {...props.elementConfig} value={props.value} onChange={props.changed}/>
             break;
-            case('select'):
+        case('select'):
             inputElement = (
             <select 
             className={classes.InputElement} 
