@@ -1,126 +1,108 @@
 import React , {Component} from 'react';
 import {connect } from 'react-redux';
+import { Formik , Form , Field , ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
-import classes from './ContactData.css';
 import axios from '../../../axios-order';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import Input from '../../../components/UI/Input/Input';
+import classes from '../../../components/UI/Input/Input.css';
 import  * as actions from '../../../store/actions/index';
+
+const orderSchema = Yup.object().shape({
+    fname: Yup.string()
+            .min(3,'Too Short')
+            .max(10,'Too Long')
+            .required('Required'),
+    email: Yup.string()
+            .email('Invalid email')
+            .required('Required'),
+    street: Yup.string()
+            .required('Required'),
+    zipcode: Yup.number()
+            .typeError('Use numbers only')
+            .min(9999, 'Short')
+            .required('Required'),
+    country: Yup.string()
+            .required('Required')
+});
 
 class ContactData extends Component {
         state = {
-            orderForm: {
-                    name: {
-                        elementType: 'input',
-                        elementConfig: {
-                            type: 'text',
-                            placeholder:'Your Name'
-                        },
-                        value: ''
-                    },
-                    street:  {
-                        elementType: 'input',
-                        elementConfig: {
-                            type: 'text',
-                            placeholder:'Street'
-                        },
-                        value: ''
-                    },
-                    zipCode: {
-                        elementType: 'input',
-                        elementConfig: {
-                            type: 'text',
-                            placeholder:'Zip Code'
-                        },
-                        value: ''
-                    },
-                    country: {
-                        elementType: 'input',
-                        elementConfig: {
-                            type: 'text',
-                            placeholder:'Country'
-                        },
-                        value: ''
-                    },
-                    email: {
-                        elementType: 'input',
-                        elementConfig: {
-                            type: 'email',
-                            placeholder:'Your Email'
-                        },
-                        value: ''
-                    },
-                    deliveryMethod: {
-                        elementType: 'select',
-                        elementConfig: {
-                            options: [
-                                {value: 'fastest', dispalyValue: 'Fastest'},
-                                {value: 'cheapest', dispalyValue: 'Cheapest'}
-                                ]
-                        },
-                        value: 'fastest'
-                    },
-            },
             loading:false
         }
 
-        orderHandler = (event)=> {
-            event.preventDefault();
-            const formData = {}
-            for(let formElementIdentifier in this.state.orderForm) {
-                formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
-            }
-
+        Submitdata = (values)=> {             
             const order = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData : formData
+            orderData : values
         }
         debugger;
         this.props.onOrderBurger(order);
         }
-
-        inputChangedhandler =(event, inputIdentifier) => {
-
-            const updatedOrderForm ={
-                ...this.state.orderForm
-            };
-            const updatedFormElement = {
-                ...updatedOrderForm[inputIdentifier]
-            };
-            updatedFormElement.value = event.target.value;
-            updatedOrderForm[inputIdentifier] = updatedFormElement;
-            this.setState({orderForm : updatedOrderForm});
-        }
             render() {
-                const formElementsArray = [];
-                for(let key in this.state.orderForm) {
-                    formElementsArray.push({
-                        id: key,
-                        config: this.state.orderForm[key]
-                    });
-                }
+
                 let form = (
-                    <form onSubmit={this.orderHandler}>
-                    {formElementsArray.map((formElement) => {
-                        return(
-                        <Input 
-                        key={formElement.id}
-                        elementType={formElement.config.elementType} 
-                        elementConfig={formElement.config.elementConfig} 
-                        value={formElement.config.value} 
-                        changed={(event) => this.inputChangedhandler(event, formElement.id)} />)
-                    })}
-                    <Button btnType="Success">ORDER</Button>
-                </form>
-                );
+                    <div>
+                    <div className={classes.ContactData}>
+                    <h4><center>Hey This is Formik Contact Form </center></h4>
+                
+                    <Formik 
+                    initialValues={{
+                        country:'India',
+                        fname:'',
+                        street:'',
+                        zipcode:'',
+                        ordertype:'fast',
+                        email:''
+                        
+                    }}
+                    validationSchema={orderSchema}
+                    onSubmit={values => {
+                    this.Submitdata({...values});
+                    }}
+                    >
+                    {({errors , touched, handleSubmit,isSubmitting, handleChange, handleBlur}) => (
+                        <Form>
+                            <label className={classes.Label}>Name</label>
+                            <Field className={classes.InputElement} type="text" name="fname" placeholder="First Name" onChange={handleChange} onBlur={handleBlur}/>
+                            <ErrorMessage name="fname" render= {msg => <div className={classes.Error}>{msg}</div>} />
+    
+                            <label className={classes.Label}>Street</label>
+                            <Field className={classes.InputElement} type="text" name="street" placeholder="Street"/>
+                            <ErrorMessage name="street" render= {msg => <div className={classes.Error}>{msg}</div>} />
+    
+                            <label className={classes.Label}>ZipCode</label>
+                            <Field className={classes.InputElement} type="text" name="zipcode" placeholder="Zip Code"/>
+                            <ErrorMessage name="zipcode" render= {msg => <div className={classes.Error}>{msg}</div>} />
+    
+                            <label className={classes.Label}>Country</label>
+                            <Field className={classes.InputElement} type="text" name="country" placeholder="Country"/>
+                            <ErrorMessage name="country" render= {msg => <div className={classes.Error}>{msg}</div>} />
+    
+                            <label className={classes.Label}>Email</label>
+                            <Field className={classes.InputElement} type="email" name="email" placeholder="Email"/>
+                            <ErrorMessage name="email" render= {msg => <div className={classes.Error}>{msg}</div>} />
+    
+                            <label className={classes.Label}>Order Type</label>
+                            <Field className={classes.InputElement} component="select" name="ordertype">
+                            <option value="cheap">Cheapest</option>
+                            <option value="fast">fastest</option>
+                            </Field>
+    
+                            <center><button className={classes.Button} type="submit">ORDER</button></center>
+                        </Form>
+                    )}
+                    </Formik>
+                    </div>
+                </div>
+                )
                 if(this.props.loading) {
                     form = <Spinner />
                 }
                 return(
                     <div className={classes.ContactData}>
-                        <h4>Enter your contact detail</h4>
                         {form}
                     </div>
                 );
