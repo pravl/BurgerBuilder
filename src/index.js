@@ -12,15 +12,25 @@ import registerServiceWorker from './registerServiceWorker';
 import reducer from './store/reducers/burgerBuilder';
 import orderReducer from './store/reducers/order';
 import fetchOrderReducer from './store/reducers/fetchOrders';
+import resetStatesReducer from './store/reducers/resetStates';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const rootReducer =combineReducers({
+const appReducer = combineReducers({
     burgerBuilder:reducer,
     order:orderReducer,
     fetchOrder:fetchOrderReducer,
-    form: formReducer
+    form: formReducer,
+    resetStates: resetStatesReducer
 });
+
+const rootReducer = (state , action ) => {
+  
+    if(action.type === 'RESET_ALL_STATES') {
+        state= undefined;
+    }
+        return appReducer(state, action)
+}
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 const app = (

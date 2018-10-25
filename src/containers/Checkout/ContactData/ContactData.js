@@ -38,7 +38,6 @@ class ContactData extends Component {
             price: this.props.price,
             orderData : values
         }
-        debugger;
         this.props.onOrderBurger(order);
         }
             render() {
