@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware , combineReducers, compose } from 'redux';
 import  thunk from 'redux-thunk';
-import { reducer as formReducer } from 'redux-form';
 
 import './index.css';
 import App from './App';
@@ -20,12 +19,11 @@ const appReducer = combineReducers({
     burgerBuilder:reducer,
     order:orderReducer,
     fetchOrder:fetchOrderReducer,
-    form: formReducer,
     resetStates: resetStatesReducer
 });
 
 const rootReducer = (state , action ) => {
-  
+    
     if(action.type === 'RESET_ALL_STATES') {
         state= undefined;
     }

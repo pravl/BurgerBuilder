@@ -3,8 +3,6 @@ import {connect } from 'react-redux';
 import { Formik , Form , Field , ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-import axios from '../../../axios-order';
-import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import classes from '../../../components/UI/Input/Input.css';
 import  * as actions from '../../../store/actions/index';
@@ -39,6 +37,9 @@ class ContactData extends Component {
             orderData : values
         }
         this.props.onOrderBurger(order);
+            this.props.afterOrder();
+        
+
         }
             render() {
 
@@ -119,7 +120,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return{
-    onOrderBurger: (order) => dispatch(actions.purchaseBurger(order))
+    onOrderBurger: (order) => dispatch(actions.purchaseBurger(order)),
+    afterOrder: () => dispatch(actions.resetStates())
     };
 };
 
