@@ -15,7 +15,13 @@ class Checkout extends Component {
     } 
 
     onCheckoutContinuedHandler = () => {
+
         this.props.history.replace('/checkout/contact-data');
+        
+    }
+
+    componentDidUpdate() {
+            window.scroll(0, 600);
     }
 
     render() {
@@ -29,7 +35,7 @@ class Checkout extends Component {
                 onCheckoutContinued={this.onCheckoutContinuedHandler} />
                 <Route path={this.props.match.path + '/contact-data'} component={ContactData} />
                 </div>
-              
+            
             );
         }
         return summary;
