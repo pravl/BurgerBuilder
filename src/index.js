@@ -16,7 +16,7 @@ import resetStatesReducer from './store/reducers/resetStates';
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import { PersistGate } from 'redux-persist/integration/react'
-
+import { Beforeunload } from 'react-beforeunload';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -49,9 +49,11 @@ const  persistor = persistStore(store)
 const app = (
     <Provider store = {store}>
      <PersistGate loading={null} persistor={persistor}>
+     <Beforeunload onBeforeunload={() => 'you will  lose your data'}>
         <BrowserRouter>
             <App />
         </BrowserRouter>
+        </Beforeunload>
         </PersistGate>
     </Provider>
 ); 
